@@ -36,6 +36,7 @@ SYSCALL_TEST_DIR := $(INITRAMFS)/opt/syscall_test
 .PHONY: all
 all: build
 
+# move the required libraries to the initramfs directory
 $(INITRAMFS)/lib/x86_64-linux-gnu: | $(VDSO_LIB)
 	@mkdir -p $@
 	@cp -L /lib/x86_64-linux-gnu/libc.so.6 $@
@@ -84,9 +85,11 @@ $(INITRAMFS)/etc:
 	@cp $(CUR_DIR)/etc/* $@
 
 # Install busybox into /bin and /usr/bin.
+# move python interpreter
 $(INITRAMFS)/bin:
 	@mkdir -p $@
 	@/bin/busybox --install -s $@
+	@cp /bin/python3.10 $@
 
 $(INITRAMFS)/sbin:
 	@mkdir -p $@
