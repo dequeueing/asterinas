@@ -28,6 +28,7 @@ INITRAMFS_ALL_DIRS := \
 	$(INITRAMFS)/sbin \
 	$(INITRAMFS)/usr/bin \
 	$(INITRAMFS)/usr/local \
+	$(INITRAMFS)/usr/lib \
 	$(INITRAMFS)/test \
 	$(INITRAMFS)/benchmark \
 	$(INITRAMFS_EMPTY_DIRS)
@@ -106,6 +107,11 @@ $(INITRAMFS)/usr/local:
 	@mkdir -p $@
 	@cp -r /usr/local/nginx $@
 	@cp -r /usr/local/redis $@
+
+# copy the python3.10 library to the initramfs
+$(INITRAMFS)/usr/lib:
+	@mkdir -p $@
+	@cp -r /usr/lib/python3.10 $@
 
 .PHONY: $(INITRAMFS)/test
 $(INITRAMFS)/test:
