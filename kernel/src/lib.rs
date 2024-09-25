@@ -150,6 +150,8 @@ fn init_thread() {
 
     let karg = boot::kernel_cmdline();
 
+    println!("LOOK AT HERE{}", karg.get_initproc_path().unwrap());
+
     let initproc = Process::spawn_user_process(
         karg.get_initproc_path().unwrap(),
         karg.get_initproc_argv().to_vec(),
