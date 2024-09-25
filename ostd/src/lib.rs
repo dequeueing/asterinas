@@ -19,6 +19,7 @@
 #![feature(ptr_sub_ptr)]
 #![feature(strict_provenance)]
 #![feature(sync_unsafe_cell)]
+#![feature(allocator_api)]
 // The `generic_const_exprs` feature is incomplete however required for the page table
 // const generic implementation. We are using this feature in a conservative manner.
 #![allow(incomplete_features)]
@@ -86,7 +87,7 @@ pub unsafe fn init() {
 
     mm::page::allocator::init();
     mm::kspace::init_kernel_page_table(mm::init_page_meta());
-    mm::misc_init();
+    mm::dma::init();
 
     // SAFETY: This function is called only once in the entire system.
     unsafe { trap::softirq::init() };

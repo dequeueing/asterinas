@@ -1,25 +1,24 @@
 // SPDX-License-Identifier: MPL-2.0
 
-use core::{
-    alloc::{GlobalAlloc, Layout},
-    ptr::NonNull,
-};
+mod slab_allocator;
+
+use core::alloc::{GlobalAlloc, Layout};
 
 use align_ext::AlignExt;
-use buddy_system_allocator::Heap;
 use log::debug;
+use slab_allocator::Heap;
+use spin::Once;
 
 use super::paddr_to_vaddr;
 use crate::{
     mm::{page::allocator::PAGE_ALLOCATOR, PAGE_SIZE},
     prelude::*,
-    sync::SpinLock,
-    trap::disable_local,
+    sync::{LocalIrqDisabled, SpinLock, SpinLockGuard},
     Error,
 };
 
 #[global_allocator]
-static HEAP_ALLOCATOR: LockedHeapWithRescue<32> = LockedHeapWithRescue::new(rescue);
+static HEAP_ALLOCATOR: LockedHeapWithRescue = LockedHeapWithRescue::new();
 
 #[alloc_error_handler]
 pub fn handle_alloc_error(layout: core::alloc::Layout) -> ! {
@@ -28,76 +27,66 @@ pub fn handle_alloc_error(layout: core::alloc::Layout) -> ! {
 
 const INIT_KERNEL_HEAP_SIZE: usize = PAGE_SIZE * 256;
 
-static mut HEAP_SPACE: [u8; INIT_KERNEL_HEAP_SIZE] = [0; INIT_KERNEL_HEAP_SIZE];
+#[repr(align(4096))]
+struct InitHeapSpace([u8; INIT_KERNEL_HEAP_SIZE]);
+
+static mut HEAP_SPACE: InitHeapSpace = InitHeapSpace([0; INIT_KERNEL_HEAP_SIZE]);
 
 pub fn init() {
     // SAFETY: The HEAP_SPACE is a static memory range, so it's always valid.
     unsafe {
-        HEAP_ALLOCATOR.init(HEAP_SPACE.as_ptr(), INIT_KERNEL_HEAP_SIZE);
+        HEAP_ALLOCATOR.init(HEAP_SPACE.0.as_ptr(), INIT_KERNEL_HEAP_SIZE);
     }
 }
 
-struct LockedHeapWithRescue<const ORDER: usize> {
-    heap: SpinLock<Heap<ORDER>>,
-    rescue: fn(&Self, &Layout) -> Result<()>,
+struct LockedHeapWithRescue {
+    heap: Once<SpinLock<Heap>>,
 }
 
-impl<const ORDER: usize> LockedHeapWithRescue<ORDER> {
+impl LockedHeapWithRescue {
     /// Creates an new heap
-    pub const fn new(rescue: fn(&Self, &Layout) -> Result<()>) -> Self {
-        Self {
-            heap: SpinLock::new(Heap::<ORDER>::new()),
-            rescue,
-        }
+    pub const fn new() -> Self {
+        Self { heap: Once::new() }
     }
 
     /// SAFETY: The range [start, start + size) must be a valid memory region.
     pub unsafe fn init(&self, start: *const u8, size: usize) {
-        self.heap.disable_irq().lock().init(start as usize, size);
-    }
-
-    /// SAFETY: The range [start, start + size) must be a valid memory region.
-    unsafe fn add_to_heap(&self, start: usize, size: usize) {
         self.heap
-            .disable_irq()
-            .lock()
-            .add_to_heap(start, start + size)
+            .call_once(|| SpinLock::new(Heap::new(start as usize, size)));
     }
 }
 
-unsafe impl<const ORDER: usize> GlobalAlloc for LockedHeapWithRescue<ORDER> {
+unsafe impl GlobalAlloc for LockedHeapWithRescue {
     unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
-        let _guard = disable_local();
+        let mut heap = self.heap.get().unwrap().disable_irq().lock();
 
-        if let Ok(allocation) = self.heap.lock().alloc(layout) {
-            return allocation.as_ptr();
+        if let Ok(allocation) = heap.allocate(layout) {
+            return allocation as *mut u8;
         }
 
         // Avoid locking self.heap when calling rescue.
-        if (self.rescue)(self, &layout).is_err() {
+        if rescue(&mut heap, &layout).is_err() {
             return core::ptr::null_mut::<u8>();
         }
 
-        let res = self
-            .heap
-            .lock()
-            .alloc(layout)
+        heap.allocate(layout)
             .map_or(core::ptr::null_mut::<u8>(), |allocation| {
-                allocation.as_ptr()
-            });
-        res
+                allocation as *mut u8
+            })
     }
 
     unsafe fn dealloc(&self, ptr: *mut u8, layout: Layout) {
         debug_assert!(ptr as usize != 0);
         self.heap
+            .get()
+            .unwrap()
             .disable_irq()
             .lock()
-            .dealloc(NonNull::new_unchecked(ptr), layout)
+            .deallocate(ptr as usize, layout)
     }
 }
 
-fn rescue<const ORDER: usize>(heap: &LockedHeapWithRescue<ORDER>, layout: &Layout) -> Result<()> {
+fn rescue(heap: &mut SpinLockGuard<Heap, LocalIrqDisabled>, layout: &Layout) -> Result<()> {
     const MIN_NUM_FRAMES: usize = 0x4000000 / PAGE_SIZE; // 64MB
 
     debug!("enlarge heap, layout = {:?}", layout);
@@ -134,7 +123,7 @@ fn rescue<const ORDER: usize>(heap: &LockedHeapWithRescue<ORDER>, layout: &Layou
             vaddr,
             PAGE_SIZE * num_frames
         );
-        heap.add_to_heap(vaddr, PAGE_SIZE * num_frames);
+        heap.add_memory(vaddr, PAGE_SIZE * num_frames);
     }
 
     Ok(())
