@@ -89,10 +89,12 @@ $(INITRAMFS)/etc:
 
 # Install busybox into /bin and /usr/bin.
 # move python interpreter
+# move a testing file into root 
 $(INITRAMFS)/bin:
 	@mkdir -p $@
 	@/bin/busybox --install -s $@
 	@cp /bin/python $@
+	@cp -r $(CUR_DIR)/python $(INITRAMFS)
 
 $(INITRAMFS)/sbin:
 	@mkdir -p $@
