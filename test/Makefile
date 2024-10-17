@@ -90,11 +90,15 @@ $(INITRAMFS)/etc:
 # Install busybox into /bin and /usr/bin.
 # move python interpreter
 # move a testing file into root 
+# move miniconda.sh into asterinas
+# @mkdir -p $(INITRAMFS)/miniconda3
+# @cp ~/miniconda3/miniconda.sh $(INITRAMFS)/miniconda3
 $(INITRAMFS)/bin:
 	@mkdir -p $@
 	@/bin/busybox --install -s $@
 	@cp /bin/python $@
 	@cp -r $(CUR_DIR)/python $(INITRAMFS)
+	@cp -r /usr/local/lib/python3.10/dist-packages/numpy
 
 $(INITRAMFS)/sbin:
 	@mkdir -p $@
