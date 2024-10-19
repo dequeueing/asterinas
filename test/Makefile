@@ -98,8 +98,9 @@ $(INITRAMFS)/bin:
 	@/bin/busybox --install -s $@
 	@cp /bin/python $@
 	@cp -r $(CUR_DIR)/python $(INITRAMFS)
-	@cp -r /usr/local/lib/python3.10/dist-packages/numpy
-
+	@mkdir -p $(INITRAMFS)/usr/local/lib/python3.10/dist-packages
+	@cp -r /usr/local/lib/python3.10/dist-packages $(INITRAMFS)/usr/local/lib/python3.10/dist-packages
+	
 $(INITRAMFS)/sbin:
 	@mkdir -p $@
 	@cp /sbin/ldconfig $@
