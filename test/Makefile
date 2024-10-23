@@ -47,6 +47,8 @@ $(INITRAMFS)/lib/x86_64-linux-gnu: | $(VDSO_LIB)
 	@cp -L /lib/x86_64-linux-gnu/libpthread.so.0 $@
 	@cp -L /lib/x86_64-linux-gnu/libexpat.so.1 $@
 	@cp -L /lib/x86_64-linux-gnu/libc.so.6 $@
+	@cp -L /lib/x86_64-linux-gnu/libffi.so.8 $@
+	@cp -L /lib/x86_64-linux-gnu/librt.so.1 $@
 	@# required for benchmarks
 	@cp -L /lib/x86_64-linux-gnu/libcrypto.so.3 $@
 	@cp -L /lib/x86_64-linux-gnu/libcrypt.so.1 $@
