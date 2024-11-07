@@ -1,0 +1,88 @@
+# python mnist-rec-new.py 
+For initial parameters, Train Accuracy: 0.1302, Validation Accuracy: 0.1303
+Epoch 0, Batch 0, Loss: 2.3028
+Epoch 0, Batch 10, Loss: 2.2918
+Epoch 0, Batch 20, Loss: 2.2665
+Epoch 0, Batch 30, Loss: 2.2079
+Epoch 0, Batch 40, Loss: 2.1481
+Epoch 0, Batch 50, Loss: 1.9787
+Epoch 0, Batch 60, Loss: 1.7277
+Epoch 0, Batch 70, Loss: 1.5554
+Epoch 0, Batch 80, Loss: 1.2733
+Epoch 0, Batch 90, Loss: 1.0224
+^NEpoch 0, Batch 100, Loss: 0.8487
+Epoch 0, Batch 110, Loss: 0.8440
+Epoch 0, Batch 120, Loss: 0.7942
+Epoch 0, Batch 130, Loss: 0.7196
+Epoch 0, Batch 140, Loss: 0.6134
+Epoch 0, Batch 150, Loss: 0.4899
+Epoch 0, Batch 160, Loss: 0.5676
+Epoch 0, Batch 170, Loss: 0.6165
+Epoch 0, Batch 180, Loss: 0.5691
+Epoch 0, Batch 190, Loss: 0.5549
+Epoch 0, Batch 200, Loss: 0.4860
+Epoch 0, Batch 210, Loss: 0.4983
+Epoch 0, Batch 220, Loss: 0.3373
+Epoch 0, Batch 230, Loss: 0.4448
+Epoch 0, Batch 240, Loss: 0.3738
+Epoch 0, Batch 250, Loss: 0.4293
+Epoch 0, Batch 260, Loss: 0.5905
+Epoch 0, Batch 270, Loss: 0.6291
+Epoch 0, Batch 280, Loss: 0.6331
+Epoch 0, Batch 290, Loss: 0.6020
+Epoch 0, Batch 300, Loss: 0.3599
+Epoch 0, Batch 310, Loss: 0.3441
+Epoch 0, Batch 320, Loss: 0.4627
+Epoch 0, Batch 330, Loss: 0.4467
+Epoch 0, Batch 340, Loss: 0.5350
+Epoch 0, Batch 350, Loss: 0.3147
+Epoch 0, Batch 360, Loss: 0.2330
+Epoch 0, Batch 370, Loss: 0.5430
+Epoch 0, Batch 380, Loss: 0.5070
+Epoch 0, Batch 390, Loss: 0.4276
+Epoch 0, Batch 400, Loss: 0.2514
+Epoch 0, Batch 410, Loss: 0.2161
+Epoch 0, Batch 420, Loss: 0.3118
+Epoch 0, Batch 430, Loss: 0.4838
+Epoch 0, Batch 440, Loss: 0.3104
+Epoch 0, Batch 450, Loss: 0.2997
+Epoch 0, Batch 460, Loss: 0.3445
+Epoch 0, Batch 470, Loss: 0.2775
+Epoch 0, Batch 480, Loss: 0.4191
+Epoch 0, Batch 490, Loss: 0.2963
+Epoch 0, Batch 500, Loss: 0.2621
+Epoch 0, Batch 510, Loss: 0.4454
+Epoch 0, Batch 520, Loss: 0.3000
+Epoch 0, Batch 530, Loss: 0.2967
+Epoch 0, Batch 540, Loss: 0.2723
+Epoch 0, Batch 550, Loss: 0.2641
+Epoch 0, Batch 560, Loss: 0.3397
+Epoch 0, Batch 570, Loss: 0.5299
+Epoch 0, Batch 580, Loss: 0.2545
+Epoch 0, Batch 590, Loss: 0.3403
+Epoch 0, Batch 600, Loss: 0.2203
+Epoch 0, Batch 610, Loss: 0.3621
+Epoch 0, Batch 620, Loss: 0.2654
+Epoch 0, Batch 630, Loss: 0.2624
+Epoch 0, Batch 640, Loss: 0.1879
+Epoch 0, Batch 650, Loss: 0.3500
+Epoch 0, Batch 660, Loss: 0.3711
+Epoch 0, Batch 670, Loss: 0.6685
+Epoch 0, Batch 680, Loss: 0.4409
+Epoch 0, Batch 690, Loss: 0.3306
+Epoch 0, Batch 700, Loss: 0.3806
+Epoch 0, Batch 710, Loss: 0.3624
+Epoch 0, Batch 720, Loss: 0.3933
+Epoch 0, Batch 730, Loss: 0.3952
+Epoch 0, Batch 740, Loss: 0.2885
+Epoch 0, Average Loss: 0.6082
+End of Epoch 0, Train Accuracy: 0.9133, Validation Accuracy: 0.8672
+Target accuracy reached, stopping training.
+Learning rate:  0.1
+Final Train accuracy: 0.9041
+Final Test accuracy: 0.9183
+free(): invalid pointer
+---------------------------------------------------------------------------
+improvement made: 
+- Improve the training code stability
+- Disable multithreading
