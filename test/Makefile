@@ -50,6 +50,11 @@ $(INITRAMFS)/lib/x86_64-linux-gnu: | $(VDSO_LIB)
 	@cp -L /lib/x86_64-linux-gnu/liblzma.so.5 $@
 	@cp -L /lib/x86_64-linux-gnu/libbz2.so.1.0 $@
 	@cp -L /lib/x86_64-linux-gnu/libmagic.so.1 $@
+	@# required for pytorch
+	@cp -L /lib/x86_64-linux-gnu/libffi.so.8 $@
+	@cp -L /lib/x86_64-linux-gnu/librt.so.1 $@
+	@cp -L /lib/x86_64-linux-gnu/libssl.so.3 $@
+	@cp -L /lib/x86_64-linux-gnu/libuuid.so.1 $@
 	@# required for benchmarks
 	@cp -L /lib/x86_64-linux-gnu/libcrypto.so.3 $@
 	@cp -L /lib/x86_64-linux-gnu/libcrypt.so.1 $@
@@ -106,8 +111,6 @@ $(INITRAMFS)/bin:
 	@cp /usr/bin/load.sh $@
 	@cp -r $(CUR_DIR)/python $(INITRAMFS)
 	@cp -r $(CUR_DIR)/mnist-dataset $(INITRAMFS)/python
-	# @mkdir -p $(INITRAMFS)/usr/local
-	# @cp -r /usr/local/lib/ $(INITRAMFS)/usr/local/
 	
 $(INITRAMFS)/sbin:
 	@mkdir -p $@
@@ -122,12 +125,15 @@ $(INITRAMFS)/usr/local:
 	@mkdir -p $@
 	@cp -r /usr/local/nginx $@
 	@cp -r /usr/local/redis $@
-	@cp -r /usr/local/lib   $@
+	# @cp -r /user/local/lib $@
+	@cp -r /root/asterinas/lib $@
 
 # copy the python3.10 library to the initramfs
 $(INITRAMFS)/usr/lib:
 	@mkdir -p $@
 	@cp -r /usr/lib/python3.10 $@
+	# @cp -r /root/asterinas/python3.10 $@
+
 
 .PHONY: $(INITRAMFS)/test
 $(INITRAMFS)/test:
